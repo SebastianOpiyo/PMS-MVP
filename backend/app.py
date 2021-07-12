@@ -1,20 +1,27 @@
 from flask import Flask, jsonify, request
+from flask_restful import Resource, Api
+import os
+
+from pymongo import MongoClient
+
+# APIs
+from .api.endpoints.auth import Register
+
 
 app = Flask(__name__)
+api = Api(app)
 
-@app.route('/')
-def hello_world():
-    name = {
-    "first_name": "Opiyo",
-    "second_name": "Sebastian"
-    }
-    return jsonify(name)
+client = MongoClient("mongodb://db:27017")
+db = client.PmsDatabase
 
-@app.route('/authenticate', methods=["POST"])
-def authenticate_user():
-    userdata = request.get_data()
-    return userdata
+users = db["Users"]
+
+
+# Api EndPoints Register
+# api.add_resource(Home, '/')
+api.add_resource(Register, '/register')
+# api.add_resource(SignUpAPI, '/getuser')
 
 
 if __name__ == "__main__":
-    app.run(host="127.0.0.1", debug=True, port=80)
+    app.run(host="0.0.0.0", debug=True)
