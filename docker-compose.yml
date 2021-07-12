@@ -10,9 +10,9 @@ services:
   frontend:
     build: ./frontend/pms-client
     ports: 
-      - "8080:8080"
-    links:
-      - backend
+      - "8080:3000"
+    stdin_open: true
+    tty: true
 
   db:
     build: ./db

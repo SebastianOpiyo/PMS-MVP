@@ -1,27 +1,35 @@
 from flask import Flask, jsonify, request
-from flask_restful import Resource, Api
+from flask_restful import Api
+from pymongo import MongoClient
 import os
 
-from pymongo import MongoClient
-
-# APIs
-from .api.endpoints.auth import Register
-
-
 app = Flask(__name__)
-api = Api(app)
+API = Api(app)
 
 client = MongoClient("mongodb://db:27017")
 db = client.PmsDatabase
-
 users = db["Users"]
+parcels =db["Parcels"]
+payment = db["Payment"]
 
+# APIs
+from api.endpoints.auth import Register,SignInAPI, PasswordChangeAPI
+from api.endpoints.parcel import RegisterParcel, TransferParcel
+from api.endpoints.payment import PaymentAPI, GetAllPaymentRecords
 
 # Api EndPoints Register
-# api.add_resource(Home, '/')
-api.add_resource(Register, '/register')
-# api.add_resource(SignUpAPI, '/getuser')
+# Auth
+API.add_resource(Register, '/register')
+API.add_resource(SignInAPI, '/signin')
+API.add_resource(PasswordChangeAPI, '/changePassword')
 
+#Parcel
+API.add_resource(RegisterParcel, '/registerParcel')
+API.add_resource(TransferParcel, '/transferParcel')
+
+# Payment
+API.add_resource(PaymentAPI, '/payment')
+API.add_resource(GetAllPaymentRecords, '/paymentRecords')
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", debug=True)
+    app.run(host="0.0.0.0")
